@@ -15,6 +15,7 @@ class Drink extends BaseModel
 {
     //protected $table = '';
     //protected $casts = [];
+    public $timestamps = false;
 
     //=== RELATIONSHIPS ===//
     public function log(): HasMany
