@@ -30,6 +30,7 @@
                             <thead>
                             <tr>
                                 <th class="border-top-0">Drink</th>
+                                <th class="border-top-0">Servings</th>
                                 <th class="border-top-0">mg Consumed</th>
                                 <th class="border-top-0">Time</th>
                                 <th class="remove-drink border-top-0" @click="removeServing(l.id)">Remove</th>
@@ -38,7 +39,8 @@
                             <tbody>
                             <tr v-for="l  in drink_log">
                                 <td>{{ l.name }}</td>
-                                <td>{{ l.caffeine }}</td>
+                                <td>{{ l.servings }}</td>
+                                <td>{{ l.caffeine * l.servings }}mg</td>
                                 <td>{{ l.time | moment("hh:mma [on] MMMM Do YYYY") }}</td>
                                 <td class="remove-drink x">X</td>
                             </tr>
@@ -75,21 +77,37 @@ export default {
         }
     },
     mounted() {
-      this.drink_log.forEach((l) => {
-            this.mgRemaining = this.mgRemaining - l.caffeine;
-      });
+        this.drink_log.forEach((l) => {
+            this.mgRemaining = this.mgRemaining - (l.caffeine * l.servings);
+        });
     },
     methods: {
         serving_text(servings) {
             return servings + ' serving' + (servings > 1 ? 's' : '');
         },
         addServing(id, caffeine, servings) {
+            //adjust status
             this.mgRemaining = this.mgRemaining - (caffeine * servings);
+
+            //add to local log
+            let drink = this.drinks.find((d) => d.id === id);
+            let newLogId =  Date.now()
+            this.drink_log.push({
+                id: newLogId,
+                name: drink.name,
+                servings: servings,
+                caffeine: drink.caffeine_per_serving,
+                time: Date.now()
+            })
+
+            //save to DB
             axios.post('/save', {
                 id,
                 servings,
+            }).then((res) => {
+                let logIndex = this.drink_log.findIndex((d) => d.id === newLogId);
+                this.drink_log[logIndex].id = res.data;
             })
-            //todo add to local log
         },
         removeServing(id) {
 

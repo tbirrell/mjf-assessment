@@ -1973,6 +1973,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     drinks: Array,
@@ -1987,7 +1989,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.drink_log.forEach(function (l) {
-      _this.mgRemaining = _this.mgRemaining - l.caffeine;
+      _this.mgRemaining = _this.mgRemaining - l.caffeine * l.servings;
     });
   },
   methods: {
@@ -1995,11 +1997,33 @@ __webpack_require__.r(__webpack_exports__);
       return servings + ' serving' + (servings > 1 ? 's' : '');
     },
     addServing: function addServing(id, caffeine, servings) {
-      this.mgRemaining = this.mgRemaining - caffeine * servings;
+      var _this2 = this;
+
+      //adjust status
+      this.mgRemaining = this.mgRemaining - caffeine * servings; //add to local log
+
+      var drink = this.drinks.find(function (d) {
+        return d.id === id;
+      });
+      var newLogId = Date.now();
+      this.drink_log.push({
+        id: newLogId,
+        name: drink.name,
+        servings: servings,
+        caffeine: drink.caffeine_per_serving,
+        time: Date.now()
+      }); //save to DB
+
       axios.post('/save', {
         id: id,
         servings: servings
-      }); //todo add to local log
+      }).then(function (res) {
+        var logIndex = _this2.drink_log.findIndex(function (d) {
+          return d.id === newLogId;
+        });
+
+        _this2.drink_log[logIndex].id = res.data;
+      });
     },
     removeServing: function removeServing(id) {}
   }
@@ -37763,6 +37787,10 @@ var render = function() {
                   _c("th", { staticClass: "border-top-0" }, [_vm._v("Drink")]),
                   _vm._v(" "),
                   _c("th", { staticClass: "border-top-0" }, [
+                    _vm._v("Servings")
+                  ]),
+                  _vm._v(" "),
+                  _c("th", { staticClass: "border-top-0" }, [
                     _vm._v("mg Consumed")
                   ]),
                   _vm._v(" "),
@@ -37789,7 +37817,9 @@ var render = function() {
                   return _c("tr", [
                     _c("td", [_vm._v(_vm._s(l.name))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(l.caffeine))]),
+                    _c("td", [_vm._v(_vm._s(l.servings))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(l.caffeine * l.servings) + "mg")]),
                     _vm._v(" "),
                     _c("td", [
                       _vm._v(
