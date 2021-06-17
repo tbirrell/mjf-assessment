@@ -1977,16 +1977,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     drinks: Array,
-    drink_log: Array
+    drink_log: Array,
+    lifetime_consumption: Number
   },
   data: function data() {
     return {
       mgRemaining: 500,
-      drinkLog: _.clone(this.drink_log)
+      drinkLog: _.clone(this.drink_log),
+      lifetimeConsumption: _.clone(this.lifetime_consumption)
     };
   },
   mounted: function mounted() {
@@ -2012,7 +2015,8 @@ __webpack_require__.r(__webpack_exports__);
         servings: servings
       }).then(function (res) {
         //adjust status
-        _this2.mgRemaining = _this2.mgRemaining - caffeine * servings; //add to local log
+        _this2.mgRemaining = _this2.mgRemaining - caffeine * servings;
+        _this2.lifetimeConsumption = _this2.lifetimeConsumption - caffeine * servings; //add to local log
 
         var drink = _this2.drinks.find(function (d) {
           return d.id === id;
@@ -2067,7 +2071,8 @@ __webpack_require__.r(__webpack_exports__);
     removeLocalDrink: function removeLocalDrink(index) {
       //adjust status
       var log = this.drinkLog[index];
-      this.mgRemaining = this.mgRemaining + log.caffeine * log.servings; //remove from local list
+      this.mgRemaining = this.mgRemaining + log.caffeine * log.servings;
+      this.lifetimeConsumption = this.lifetimeConsumption + log.caffeine * log.servings; //remove from local list
 
       this.drinkLog.splice(index, 1);
     }
@@ -59446,13 +59451,18 @@ var render = function() {
               _vm._v(
                 "\n                        " +
                   _vm._s(_vm.mgRemaining) +
-                  "mg\n                    "
-              )
+                  "mg\n                        "
+              ),
+              _c("span", [
+                _vm._v(
+                  "\n                            remaining\n                        "
+                )
+              ])
             ]),
             _vm._v(" "),
-            _c("div", [
+            _c("div", { staticClass: "mt-4" }, [
               _vm._v(
-                "\n                        remaining\n                    "
+                _vm._s(_vm.lifetimeConsumption) + "mg Lifetime Consumption"
               )
             ])
           ])

@@ -54,10 +54,11 @@
                     <div class="card-body mgCard">
                         <div class="mgRemaining">
                             {{ mgRemaining }}mg
+                            <span>
+                                remaining
+                            </span>
                         </div>
-                        <div>
-                            remaining
-                        </div>
+                        <div class="mt-4">{{ lifetimeConsumption }}mg Lifetime Consumption</div>
                     </div>
                 </div>
             </div>
@@ -71,12 +72,14 @@ import moment from 'moment';
 export default {
     props: {
         drinks: Array,
-        drink_log: Array
+        drink_log: Array,
+        lifetime_consumption: Number
     },
     data() {
         return {
             mgRemaining: 500,
-            drinkLog: _.clone(this.drink_log)
+            drinkLog: _.clone(this.drink_log),
+            lifetimeConsumption: _.clone(this.lifetime_consumption)
         }
     },
     mounted() {
@@ -96,6 +99,7 @@ export default {
             axios.post('/save', {id, servings}).then((res) => {
                 //adjust status
                 this.mgRemaining = this.mgRemaining - (caffeine * servings);
+                this.lifetimeConsumption = this.lifetimeConsumption - (caffeine * servings);
 
                 //add to local log
                 let drink = this.drinks.find((d) => d.id === id);
@@ -140,6 +144,7 @@ export default {
             //adjust status
             let log = this.drinkLog[index];
             this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
+            this.lifetimeConsumption = this.lifetimeConsumption + (log.caffeine * log.servings);
             //remove from local list
             this.drinkLog.splice(index, 1);
         }

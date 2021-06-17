@@ -26,8 +26,12 @@ class DrinkController extends Controller
                                      'time'     => $entry->created_at
                                  ];
                              });
+        $lifetime_consumption =  DrinkLog::with('drink')->get()
+                ->sum(function ($entry) {
+                    return $entry->drink->caffeine_per_serving * $entry->servings;
+                });
 
-        return view('main', compact('drinks', 'drink_log'));
+        return view('main', compact('drinks', 'drink_log', 'lifetime_consumption'));
     }
 
     public function save(Request $request)
@@ -43,7 +47,7 @@ class DrinkController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         //real drink?
-        if(!Drink::find($data['id'])) {
+        if (!Drink::find($data['id'])) {
             return response()->json(['errors' => ['drinks' => ['Drink does not exist']]], 422);
         }
 
@@ -52,7 +56,7 @@ class DrinkController extends Controller
             'servings' => $data['servings']
         ]);
 
-            return response()->json(['id' => $drink_log->id], 201);
+        return response()->json(['id' => $drink_log->id], 201);
     }
 
     public function delete(Request $request)

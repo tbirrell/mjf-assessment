@@ -10991,6 +10991,12 @@ a.text-dark:focus {
   font-size: 4rem;
 }
 
+.mgCard .mgRemaining span {
+  font-size: 1.25rem;
+  margin-top: -10px;
+  display: block;
+}
+
 .btn {
   font-weight: bold;
 }

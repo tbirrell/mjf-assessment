@@ -40,6 +40,11 @@
     text-align: center;
     .mgRemaining {
         font-size: 4rem;
+        span {
+            font-size: 1.25rem;
+            margin-top: -10px;
+            display: block;
+        }
     }
 }
 
