@@ -66,6 +66,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+
 export default {
     props: {
         drinks: Array,
@@ -81,6 +83,9 @@ export default {
         this.drink_log.forEach((l) => {
             this.mgRemaining = this.mgRemaining - (l.caffeine * l.servings);
         });
+        window.setInterval(() => {
+            this.checkExpiredDrinks()
+        }, 30 * 1000)
     },
     methods: {
         serving_text(servings) {
@@ -115,18 +120,29 @@ export default {
         },
         removeServing(logID, localIndex) {
             //remove from DB
-            axios.post('/delete', {id: logID}).then((res => {
-                //adjust status
-                let log = this.drinkLog[localIndex];
-                this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
-                //remove from local list
-                this.drinkLog.splice(localIndex, 1);
-            })).catch((err) => {
+            axios.post('/delete', {id: logID}).then(res => {
+                this.removeLocalDrink(localIndex);
+            }).catch((err) => {
                 let msg = err.response.data.errors;
                 if ('id' in msg) {
                     alert(msg.id[0]);
                 }
             });
+        },
+        checkExpiredDrinks() {
+            console.log('test');
+            this.drinkLog.forEach((l, i) => {
+                if (moment(l.time).isBefore(moment().subtract(3, 'minutes'))) {
+                    this.removeLocalDrink(i)
+                }
+            });
+        },
+        removeLocalDrink(index) {
+            //adjust status
+            let log = this.drinkLog[index];
+            this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
+            //remove from local list
+            this.drinkLog.splice(index, 1);
         }
     }
 }
