@@ -2002,7 +2002,7 @@ __webpack_require__.r(__webpack_exports__);
 
       //save to DB
       axios.post('/save', {
-        id: 'test',
+        id: id,
         servings: servings
       }).then(function (res) {
         //adjust status
@@ -2028,6 +2028,8 @@ __webpack_require__.r(__webpack_exports__);
           alert(msg.id[0]);
         } else if ('servings' in msg) {
           alert(msg.servings[0]);
+        } else if ('drinks' in msg) {
+          alert(msg.drinks[0]);
         }
       });
     },

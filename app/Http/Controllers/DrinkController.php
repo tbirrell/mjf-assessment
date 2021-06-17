@@ -38,8 +38,13 @@ class DrinkController extends Controller
             'servings' => 'required|integer'
         ]);
 
+        //form data correct?
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+        //real drink?
+        if(!Drink::find($data['id'])) {
+            return response()->json(['errors' => ['drinks' => ['Drink does not exist']]], 422);
         }
 
         $drink_log = DrinkLog::create([
@@ -47,7 +52,7 @@ class DrinkController extends Controller
             'servings' => $data['servings']
         ]);
 
-            return response()->json(['id' => $drink_log->id]);
+            return response()->json(['id' => $drink_log->id], 201);
     }
 
     public function delete(Request $request)
@@ -61,7 +66,7 @@ class DrinkController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         } else {
             DrinkLog::find($data['id'])->delete();
-            return response()->json([], 200);
+            return response()->noContent();
         }
     }
 }

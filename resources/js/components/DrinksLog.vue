@@ -88,7 +88,7 @@ export default {
         },
         addServing(id, caffeine, servings) {
             //save to DB
-            axios.post('/save', {id: 'test', servings}).then((res) => {
+            axios.post('/save', {id, servings}).then((res) => {
                 //adjust status
                 this.mgRemaining = this.mgRemaining - (caffeine * servings);
 
@@ -108,6 +108,8 @@ export default {
                     alert(msg.id[0]);
                 } else if ('servings' in msg) {
                     alert(msg.servings[0]);
+                } else if ('drinks' in msg) {
+                    alert(msg.drinks[0]);
                 }
             })
         },
