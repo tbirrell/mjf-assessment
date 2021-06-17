@@ -6,6 +6,7 @@ use App\Models\Drink;
 use App\Models\DrinkLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DrinkController extends Controller
 {
@@ -32,18 +33,35 @@ class DrinkController extends Controller
     public function save(Request $request)
     {
         $data = $request->all();
+        $validator = Validator::make($data, [
+            'id'       => 'required|integer',
+            'servings' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
         $drink_log = DrinkLog::create([
             'drink_id' => $data['id'],
             'servings' => $data['servings']
         ]);
 
-        echo json_encode(['success'=> true, 'id' => $drink_log->id]);
+            return response()->json(['id' => $drink_log->id]);
     }
 
     public function delete(Request $request)
     {
         $data = $request->all();
-        DrinkLog::find($data['id'])->delete();
-        echo json_encode(['success'=> true]);
+        $validator = Validator::make($data, [
+            'id' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        } else {
+            DrinkLog::find($data['id'])->delete();
+            return response()->json([], 200);
+        }
     }
 }

@@ -87,35 +87,44 @@ export default {
             return servings + ' serving' + (servings > 1 ? 's' : '');
         },
         addServing(id, caffeine, servings) {
-            //adjust status
-            this.mgRemaining = this.mgRemaining - (caffeine * servings);
-
-            //add to local log
-            let drink = this.drinks.find((d) => d.id === id);
-            let newLogId = Date.now()
-            this.drinkLog.push({
-                id: newLogId,
-                name: drink.name,
-                servings: servings,
-                caffeine: drink.caffeine_per_serving,
-                time: Date.now()
-            })
-
             //save to DB
-            axios.post('/save', {id, servings,}).then((res) => {
-                let logIndex = this.drinkLog.findIndex((d) => d.id === newLogId);
-                this.drinkLog[logIndex].id = res.data.id;
+            axios.post('/save', {id: 'test', servings}).then((res) => {
+                //adjust status
+                this.mgRemaining = this.mgRemaining - (caffeine * servings);
+
+                //add to local log
+                let drink = this.drinks.find((d) => d.id === id);
+                let newLogId = Date.now()
+                this.drinkLog.push({
+                    id: res.data.id,
+                    name: drink.name,
+                    servings: servings,
+                    caffeine: drink.caffeine_per_serving,
+                    time: Date.now()
+                })
+            }).catch((err) => {
+                let msg = err.response.data.errors;
+                if ('id' in msg) {
+                    alert(msg.id[0]);
+                } else if ('servings' in msg) {
+                    alert(msg.servings[0]);
+                }
             })
         },
         removeServing(logID, localIndex) {
-            //adjust status
-            let log = this.drinkLog[localIndex];
-            this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
-            //remove from local list
-            this.drinkLog.splice(localIndex, 1);
-
             //remove from DB
-            axios.post('/delete', {id: logID})
+            axios.post('/delete', {id: logID}).then((res => {
+                //adjust status
+                let log = this.drinkLog[localIndex];
+                this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
+                //remove from local list
+                this.drinkLog.splice(localIndex, 1);
+            })).catch((err) => {
+                let msg = err.response.data.errors;
+                if ('id' in msg) {
+                    alert(msg.id[0]);
+                }
+            });
         }
     }
 }

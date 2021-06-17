@@ -2000,41 +2000,55 @@ __webpack_require__.r(__webpack_exports__);
     addServing: function addServing(id, caffeine, servings) {
       var _this2 = this;
 
-      //adjust status
-      this.mgRemaining = this.mgRemaining - caffeine * servings; //add to local log
-
-      var drink = this.drinks.find(function (d) {
-        return d.id === id;
-      });
-      var newLogId = Date.now();
-      this.drinkLog.push({
-        id: newLogId,
-        name: drink.name,
-        servings: servings,
-        caffeine: drink.caffeine_per_serving,
-        time: Date.now()
-      }); //save to DB
-
+      //save to DB
       axios.post('/save', {
-        id: id,
+        id: 'test',
         servings: servings
       }).then(function (res) {
-        var logIndex = _this2.drinkLog.findIndex(function (d) {
-          return d.id === newLogId;
+        //adjust status
+        _this2.mgRemaining = _this2.mgRemaining - caffeine * servings; //add to local log
+
+        var drink = _this2.drinks.find(function (d) {
+          return d.id === id;
         });
 
-        _this2.drinkLog[logIndex].id = res.data.id;
+        var newLogId = Date.now();
+
+        _this2.drinkLog.push({
+          id: res.data.id,
+          name: drink.name,
+          servings: servings,
+          caffeine: drink.caffeine_per_serving,
+          time: Date.now()
+        });
+      })["catch"](function (err) {
+        var msg = err.response.data.errors;
+
+        if ('id' in msg) {
+          alert(msg.id[0]);
+        } else if ('servings' in msg) {
+          alert(msg.servings[0]);
+        }
       });
     },
     removeServing: function removeServing(logID, localIndex) {
-      //adjust status
-      var log = this.drinkLog[localIndex];
-      this.mgRemaining = this.mgRemaining + log.caffeine * log.servings; //remove from local list
+      var _this3 = this;
 
-      this.drinkLog.splice(localIndex, 1); //remove from DB
-
+      //remove from DB
       axios.post('/delete', {
         id: logID
+      }).then(function (res) {
+        //adjust status
+        var log = _this3.drinkLog[localIndex];
+        _this3.mgRemaining = _this3.mgRemaining + log.caffeine * log.servings; //remove from local list
+
+        _this3.drinkLog.splice(localIndex, 1);
+      })["catch"](function (err) {
+        var msg = err.response.data.errors;
+
+        if ('id' in msg) {
+          alert(msg.id[0]);
+        }
       });
     }
   }
