@@ -2016,7 +2016,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         //adjust status
         _this2.mgRemaining = _this2.mgRemaining - caffeine * servings;
-        _this2.lifetimeConsumption = _this2.lifetimeConsumption - caffeine * servings; //add to local log
+        _this2.lifetimeConsumption = _this2.lifetimeConsumption + caffeine * servings; //add to local log
 
         var drink = _this2.drinks.find(function (d) {
           return d.id === id;
@@ -2072,7 +2072,7 @@ __webpack_require__.r(__webpack_exports__);
       //adjust status
       var log = this.drinkLog[index];
       this.mgRemaining = this.mgRemaining + log.caffeine * log.servings;
-      this.lifetimeConsumption = this.lifetimeConsumption + log.caffeine * log.servings; //remove from local list
+      this.lifetimeConsumption = this.lifetimeConsumption - log.caffeine * log.servings; //remove from local list
 
       this.drinkLog.splice(index, 1);
     }
