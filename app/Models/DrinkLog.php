@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class DrinkLog extends BaseModel
 {
-    //protected $table = '';
+    protected $table = 'drink_log';
     //protected $casts = [];
 
     //=== RELATIONSHIPS ===//

@@ -17,6 +17,7 @@ class CreateDrinkLogTable extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('drink_id');
+            $table->integer('servings');
             $table->timestamps();
         });
     }
