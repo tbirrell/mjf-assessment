@@ -10950,6 +10950,10 @@ a.text-dark:focus {
   height: 400px;
 }
 
+.drink.disabled {
+  opacity: 0.2;
+}
+
 .drink .fake-image {
   height: 150px;
   background-position: center;
@@ -10962,5 +10966,27 @@ a.text-dark:focus {
   flex-direction: row;
   justify-content: space-around;
   margin: 20px auto;
+}
+
+.remove-drink {
+  text-align: center;
+}
+
+.remove-drink.x {
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 0.7rem;
+}
+
+.remove-drink.x:hover {
+  color: red;
+}
+
+.mgCard {
+  text-align: center;
+}
+
+.mgCard .mgRemaining {
+  font-size: 4rem;
 }
 

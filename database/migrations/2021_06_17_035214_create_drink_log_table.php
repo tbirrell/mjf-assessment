@@ -15,7 +15,6 @@ class CreateDrinkLogTable extends Migration
     {
         Schema::create('drink_log', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
             $table->integer('drink_id');
             $table->integer('servings');
             $table->timestamps();
