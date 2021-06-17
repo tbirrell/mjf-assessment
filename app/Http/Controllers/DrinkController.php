@@ -26,10 +26,10 @@ class DrinkController extends Controller
                                      'time'     => $entry->created_at
                                  ];
                              });
-        $lifetime_consumption =  DrinkLog::with('drink')->get()
-                ->sum(function ($entry) {
-                    return $entry->drink->caffeine_per_serving * $entry->servings;
-                });
+        $lifetime_consumption = DrinkLog::with('drink')->get()
+                                        ->sum(function ($entry) {
+                                            return $entry->drink->caffeine_per_serving * $entry->servings;
+                                        });
 
         return view('main', compact('drinks', 'drink_log', 'lifetime_consumption'));
     }
