@@ -2058,7 +2058,6 @@ __webpack_require__.r(__webpack_exports__);
     checkExpiredDrinks: function checkExpiredDrinks() {
       var _this4 = this;
 
-      console.log('test');
       this.drinkLog.forEach(function (l, i) {
         if (moment__WEBPACK_IMPORTED_MODULE_0___default()(l.time).isBefore(moment__WEBPACK_IMPORTED_MODULE_0___default()().subtract(3, 'minutes'))) {
           _this4.removeLocalDrink(i);

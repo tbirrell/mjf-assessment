@@ -130,7 +130,6 @@ export default {
             });
         },
         checkExpiredDrinks() {
-            console.log('test');
             this.drinkLog.forEach((l, i) => {
                 if (moment(l.time).isBefore(moment().subtract(3, 'minutes'))) {
                     this.removeLocalDrink(i)
