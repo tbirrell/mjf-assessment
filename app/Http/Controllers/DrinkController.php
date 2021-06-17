@@ -37,12 +37,13 @@ class DrinkController extends Controller
             'servings' => $data['servings']
         ]);
 
-        echo $drink_log->id;
+        echo json_encode(['success'=> true, 'id' => $drink_log->id]);
     }
 
     public function delete(Request $request)
     {
         $data = $request->all();
-        dump($data);
+        DrinkLog::find($data['id'])->delete();
+        echo json_encode(['success'=> true]);
     }
 }

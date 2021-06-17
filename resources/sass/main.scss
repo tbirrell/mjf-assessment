@@ -26,11 +26,11 @@
 
 .remove-drink {
     text-align: center;
-
     &.x {
         font-weight: 900;
         font-size: 1rem;
         padding: .7rem;
+        cursor: pointer;
         &:hover {
             color: red;
         }

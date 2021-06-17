@@ -10976,6 +10976,7 @@ a.text-dark:focus {
   font-weight: 900;
   font-size: 1rem;
   padding: 0.7rem;
+  cursor: pointer;
 }
 
 .remove-drink.x:hover {

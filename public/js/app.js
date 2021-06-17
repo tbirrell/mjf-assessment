@@ -1982,7 +1982,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      mgRemaining: 500
+      mgRemaining: 500,
+      drinkLog: _.clone(this.drink_log)
     };
   },
   mounted: function mounted() {
@@ -2006,7 +2007,7 @@ __webpack_require__.r(__webpack_exports__);
         return d.id === id;
       });
       var newLogId = Date.now();
-      this.drink_log.push({
+      this.drinkLog.push({
         id: newLogId,
         name: drink.name,
         servings: servings,
@@ -2018,14 +2019,24 @@ __webpack_require__.r(__webpack_exports__);
         id: id,
         servings: servings
       }).then(function (res) {
-        var logIndex = _this2.drink_log.findIndex(function (d) {
+        var logIndex = _this2.drinkLog.findIndex(function (d) {
           return d.id === newLogId;
         });
 
-        _this2.drink_log[logIndex].id = res.data;
+        _this2.drinkLog[logIndex].id = res.data.id;
       });
     },
-    removeServing: function removeServing(id) {}
+    removeServing: function removeServing(logID, localIndex) {
+      //adjust status
+      var log = this.drinkLog[localIndex];
+      this.mgRemaining = this.mgRemaining + log.caffeine * log.servings; //remove from local list
+
+      this.drinkLog.splice(localIndex, 1); //remove from DB
+
+      axios.post('/delete', {
+        id: logID
+      });
+    }
   }
 });
 
@@ -37782,38 +37793,11 @@ var render = function() {
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-body p-0" }, [
             _c("table", { staticClass: "table table-condensed mb-0" }, [
-              _c("thead", [
-                _c("tr", [
-                  _c("th", { staticClass: "border-top-0" }, [_vm._v("Drink")]),
-                  _vm._v(" "),
-                  _c("th", { staticClass: "border-top-0" }, [
-                    _vm._v("Servings")
-                  ]),
-                  _vm._v(" "),
-                  _c("th", { staticClass: "border-top-0" }, [
-                    _vm._v("mg Consumed")
-                  ]),
-                  _vm._v(" "),
-                  _c("th", { staticClass: "border-top-0" }, [_vm._v("Time")]),
-                  _vm._v(" "),
-                  _c(
-                    "th",
-                    {
-                      staticClass: "remove-drink border-top-0",
-                      on: {
-                        click: function($event) {
-                          return _vm.removeServing(_vm.l.id)
-                        }
-                      }
-                    },
-                    [_vm._v("Remove")]
-                  )
-                ])
-              ]),
+              _vm._m(0),
               _vm._v(" "),
               _c(
                 "tbody",
-                _vm._l(_vm.drink_log, function(l) {
+                _vm._l(_vm.drinkLog, function(l, i) {
                   return _c("tr", [
                     _c("td", [_vm._v(_vm._s(l.name))]),
                     _vm._v(" "),
@@ -37829,7 +37813,18 @@ var render = function() {
                       )
                     ]),
                     _vm._v(" "),
-                    _c("td", { staticClass: "remove-drink x" }, [_vm._v("X")])
+                    _c(
+                      "td",
+                      {
+                        staticClass: "remove-drink x",
+                        on: {
+                          click: function($event) {
+                            return _vm.removeServing(l.id, i)
+                          }
+                        }
+                      },
+                      [_vm._v("X")]
+                    )
                   ])
                 }),
                 0
@@ -37861,7 +37856,28 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { staticClass: "border-top-0" }, [_vm._v("Drink")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0" }, [_vm._v("Servings")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0" }, [_vm._v("mg Consumed")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "border-top-0" }, [_vm._v("Time")]),
+        _vm._v(" "),
+        _c("th", { staticClass: "remove-drink border-top-0" }, [
+          _vm._v("Remove")
+        ])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
