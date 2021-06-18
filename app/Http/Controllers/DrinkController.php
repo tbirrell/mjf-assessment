@@ -15,7 +15,7 @@ class DrinkController extends Controller
         $drinks = Drink::all();
 
         $drink_log = DrinkLog::with('drink')
-                             ->whereTime('created_at', '>=', Carbon::now()->subMinutes(3))
+                             ->where('created_at', '>=', Carbon::now()->subMinutes(3)->toDateTimeString())
                              ->get()
                              ->map(function ($entry) {
                                  return [
@@ -26,6 +26,7 @@ class DrinkController extends Controller
                                      'time'     => $entry->created_at
                                  ];
                              });
+        
         $lifetime_consumption = DrinkLog::with('drink')->get()
                                         ->sum(function ($entry) {
                                             return $entry->drink->caffeine_per_serving * $entry->servings;

@@ -1977,7 +1977,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -2050,7 +2049,13 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/delete', {
         id: logID
       }).then(function (res) {
-        _this3.removeLocalDrink(localIndex);
+        //adjust status
+        var log = _this3.drinkLog[localIndex];
+        _this3.mgRemaining = _this3.mgRemaining + log.caffeine * log.servings;
+
+        _this3.drinkLog.splice(localIndex, 1);
+
+        _this3.lifetimeConsumption = _this3.lifetimeConsumption - log.caffeine * log.servings;
       })["catch"](function (err) {
         var msg = err.response.data.errors;
 
@@ -2064,17 +2069,15 @@ __webpack_require__.r(__webpack_exports__);
 
       this.drinkLog.forEach(function (l, i) {
         if (moment__WEBPACK_IMPORTED_MODULE_0___default()(l.time).isBefore(moment__WEBPACK_IMPORTED_MODULE_0___default()().subtract(3, 'minutes'))) {
-          _this4.removeLocalDrink(i);
+          //adjust status
+          var log = _this4.drinkLog[i];
+          _this4.mgRemaining = _this4.mgRemaining + log.caffeine * log.servings;
+          delete _this4.drinkLog[i];
         }
       });
-    },
-    removeLocalDrink: function removeLocalDrink(index) {
-      //adjust status
-      var log = this.drinkLog[index];
-      this.mgRemaining = this.mgRemaining + log.caffeine * log.servings;
-      this.lifetimeConsumption = this.lifetimeConsumption - log.caffeine * log.servings; //remove from local list
-
-      this.drinkLog.splice(index, 1);
+      this.drinkLog = this.drinkLog.filter(function (e) {
+        return e != null;
+      });
     }
   }
 });
@@ -59449,9 +59452,7 @@ var render = function() {
           _c("div", { staticClass: "card-body mgCard" }, [
             _c("div", { staticClass: "mgRemaining" }, [
               _vm._v(
-                "\n                        " +
-                  _vm._s(_vm.mgRemaining) +
-                  "mg\n                        "
+                "\n                        " + _vm._s(_vm.mgRemaining) + "mg "
               ),
               _c("span", [
                 _vm._v(

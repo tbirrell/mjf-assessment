@@ -53,8 +53,7 @@
                 <div class="card">
                     <div class="card-body mgCard">
                         <div class="mgRemaining">
-                            {{ mgRemaining }}mg
-                            <span>
+                            {{ mgRemaining }}mg <span>
                                 remaining
                             </span>
                         </div>
@@ -125,7 +124,11 @@ export default {
         removeServing(logID, localIndex) {
             //remove from DB
             axios.post('/delete', {id: logID}).then(res => {
-                this.removeLocalDrink(localIndex);
+                //adjust status
+                let log = this.drinkLog[localIndex];
+                this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
+                this.drinkLog.splice(localIndex, 1);
+                this.lifetimeConsumption = this.lifetimeConsumption - (log.caffeine * log.servings);
             }).catch((err) => {
                 let msg = err.response.data.errors;
                 if ('id' in msg) {
@@ -136,18 +139,14 @@ export default {
         checkExpiredDrinks() {
             this.drinkLog.forEach((l, i) => {
                 if (moment(l.time).isBefore(moment().subtract(3, 'minutes'))) {
-                    this.removeLocalDrink(i)
+                    //adjust status
+                    let log = this.drinkLog[i];
+                    this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
+                    delete this.drinkLog[i];
                 }
             });
+            this.drinkLog = this.drinkLog.filter(e => e != null);
         },
-        removeLocalDrink(index) {
-            //adjust status
-            let log = this.drinkLog[index];
-            this.mgRemaining = this.mgRemaining + (log.caffeine * log.servings);
-            this.lifetimeConsumption = this.lifetimeConsumption - (log.caffeine * log.servings);
-            //remove from local list
-            this.drinkLog.splice(index, 1);
-        }
     }
 }
 </script>
